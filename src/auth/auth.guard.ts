@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
             throw new UnauthorizedException('Usted no está autorizado, debe proporcionar su token de acceso');
         }
         try {
-            const payload = await this.authService.verifyToken(token)
+            const payload = await this.authService.verifyToken(token, 'ACCESS')
 
             request['user'] = payload;
         } catch (error) {

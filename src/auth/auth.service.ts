@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -57,12 +58,15 @@ export class AuthService {
       if (isPasswordMatch) {
         const payload = {
           ...user,
-          password: undefined,
+          password: undefined
         };
 
         return {
-          'access_token': this.jwtService.sign(payload, {
+          'access_token': this.jwtService.sign({ ...payload, token_type: 'ACCESS' }, {
             expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
+          }),
+          'refresh_token': this.jwtService.sign({ ...payload, token_type: 'REFRESH' }, {
+            expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')}m`,
           })
         }
       }
@@ -71,11 +75,46 @@ export class AuthService {
     throw new UnauthorizedException(`El login o contraseña no son válidos`);
   }
 
-  verifyToken(token: string): any {
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    const payload = this.verifyToken(refreshTokenDto.refresh_token, 'REFRESH');
+
+    const user = await this.usersRepository.findOne({
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        fullname: true,
+        email: true,
+        phone: true
+      },
+      where: {
+        login: refreshTokenDto.login
+      }
+    });
+    if (user) {
+      const payload = {
+        ...user
+      };
+
+      return {
+        'access_token': this.jwtService.sign(payload, {
+          expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
+        })
+      }
+    }
+
+    throw new UnauthorizedException(`El login no es válido`);
+  }
+
+  verifyToken(token: string, tokenType: string): any {
     try {
-      return this.jwtService.verify(token, {
+      const payload = this.jwtService.verify(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
+      if (payload.token_type != tokenType) {
+        throw new UnauthorizedException('El Token es inválido');
+      }
+      return payload;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         throw new UnauthorizedException('El Token está expirado');
