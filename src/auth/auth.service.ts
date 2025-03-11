@@ -13,11 +13,11 @@ export class AuthService {
   constructor(
     private configService: ConfigService,
     @InjectRepository(User)
-    private usuariosRepository: Repository<User>,
+    private usersRepository: Repository<User>,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    const existsUser = await this.usuariosRepository.exists({
+    const existsUser = await this.usersRepository.exists({
       where: [
         { login: createUserDto.login },
         { email: createUserDto.email },
@@ -28,11 +28,11 @@ export class AuthService {
     }
     // saltRounds = 10, es recomendable ya que mayor valor aumenta la complejidad del hash pero también el uso de procesador
     const hashedPassword = await bcrypt.hash(this.configService.get<string>('ENCRYPTION_KEY') + createUserDto.password, 10);
-    const newUser = this.usuariosRepository.create({  
+    const newUser = this.usersRepository.create({  
       ...createUserDto,
       password: hashedPassword
     });
-    return this.usuariosRepository.save(newUser);
+    return this.usersRepository.save(newUser);
   }
 
 }
