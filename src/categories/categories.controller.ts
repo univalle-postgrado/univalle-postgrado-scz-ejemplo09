@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, Req
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth('access-token')
+@ApiTags('v1')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -14,6 +15,7 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto, request.user.login, request.user.role);
   }
 
+  @ApiOperation({ summary: 'Obtener la lista de todas las categorías' })
   @Get()
   findAll(
     @Query('page') page: number,
