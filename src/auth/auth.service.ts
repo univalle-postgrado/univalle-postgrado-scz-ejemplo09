@@ -30,8 +30,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(this.configService.get<string>('ENCRYPTION_KEY') + createUserDto.password, 10);
     const newUser = this.usuariosRepository.create({  
       ...createUserDto,
-      password: hashedPassword,
-      last_access: new Date()
+      password: hashedPassword
     });
     return this.usuariosRepository.save(newUser);
   }
