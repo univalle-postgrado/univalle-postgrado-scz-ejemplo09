@@ -36,7 +36,7 @@ export class CategoriesService {
     return category;
   }
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+  async create(createCategoryDto: CreateCategoryDto, login: string): Promise<Category> {
 
     const existsCategory = await this.categoriesRepository.exists({
       where: { 
@@ -46,7 +46,7 @@ export class CategoriesService {
     if (existsCategory) {
       throw new ConflictException('El título ya está registrado');
     }
-    return this.categoriesRepository.save(createCategoryDto);
+    return this.categoriesRepository.save({ ...createCategoryDto, createdBy: login });
   }
 
   async findAll(page = 1, limit = 10, relations = false): Promise<{ data: Category[]; total: number; page: number; limit: number }>  {

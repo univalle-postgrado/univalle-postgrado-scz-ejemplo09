@@ -30,6 +30,12 @@ export class Movie {
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp without time zone', select: false, nullable: true })
     updatedAt: Date;
 
+    @Column({ name: 'created_by', type: 'character varying', length: 30, nullable: true })
+    createdBy: string;
+
+    @Column({ name: 'updated_by', type: 'character varying', length: 30, nullable: true })
+    updatedBy: string;
+
     @Column({ name: 'category_id', type: 'integer' })
     categoryId: number;
 
