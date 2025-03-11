@@ -31,7 +31,7 @@ export class AuthService {
     }
     // saltRounds = 10, es recomendable ya que mayor valor aumenta la complejidad del hash pero también el uso de procesador
     const hashedPassword = await bcrypt.hash(this.configService.get<string>('ENCRYPTION_KEY') + createUserDto.password, 10);
-    const newUser = this.usersRepository.create({  
+    const newUser = this.usersRepository.create({
       ...createUserDto,
       password: hashedPassword
     });
@@ -69,6 +69,22 @@ export class AuthService {
     }
 
     throw new UnauthorizedException(`El login o contraseña no son válidos`);
+  }
+
+  verifyToken(token: string): any {
+    try {
+      return this.jwtService.verify(token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('El Token está expirado');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw new UnauthorizedException('El Token es inválido');
+      } else {
+        throw new UnauthorizedException('La validación del token ha fallado');
+      }
+    }
   }
 
 }
