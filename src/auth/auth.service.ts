@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -7,11 +7,14 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private configService: ConfigService,
+    private jwtService: JwtService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
@@ -33,6 +36,39 @@ export class AuthService {
       password: hashedPassword
     });
     return this.usersRepository.save(newUser);
+  }
+
+  async login(loginDto: LoginDto) {
+    const user = await this.usersRepository.findOne({
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        fullname: true,
+        email: true,
+        phone: true
+      },
+      where: {
+        login: loginDto.login
+      }
+    });
+    if (user) {
+      const isPasswordMatch = await bcrypt.compare(this.configService.get<string>('ENCRYPTION_KEY') + loginDto.password, user.password);
+      if (isPasswordMatch) {
+        const payload = {
+          ...user,
+          password: undefined,
+        };
+
+        return {
+          'access_token': this.jwtService.sign(payload, {
+            expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
+          })
+        }
+      }
+    }
+
+    throw new UnauthorizedException(`El login o contraseña no son válidos`);
   }
 
 }
