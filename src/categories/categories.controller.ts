@@ -9,7 +9,7 @@ export class CategoriesController {
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto, @Request() request) {
-    return this.categoriesService.create(createCategoryDto, request.user.login);
+    return this.categoriesService.create(createCategoryDto, request.user.login, request.user.role);
   }
 
   @Get()

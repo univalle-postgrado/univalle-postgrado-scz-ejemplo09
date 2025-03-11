@@ -44,6 +44,7 @@ export class AuthService {
       select: {
         id: true,
         login: true,
+        role: true,
         password: true,
         fullname: true,
         email: true,
@@ -83,6 +84,7 @@ export class AuthService {
         id: true,
         login: true,
         password: true,
+        role: true,
         fullname: true,
         email: true,
         phone: true

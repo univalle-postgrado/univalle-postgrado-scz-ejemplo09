@@ -1,5 +1,10 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 
+export enum UserRoleEnum {
+    ADMIN = 'ADMIN',
+    USER = 'USER'
+}
+
 @Entity('users')
 @Unique(['login'])
 @Unique(['email'])
@@ -27,6 +32,9 @@ export class User {
 
     @Column({ default: false })
     enabled: boolean;
+
+    @Column({ nullable: true })
+    role: UserRoleEnum;
 
     @CreateDateColumn({ type: 'timestamp without time zone', select: false })
     created_at: Date;

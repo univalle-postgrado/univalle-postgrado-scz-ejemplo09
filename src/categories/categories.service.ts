@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { Repository } from 'typeorm';
+import { UserRoleEnum } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -36,8 +37,10 @@ export class CategoriesService {
     return category;
   }
 
-  async create(createCategoryDto: CreateCategoryDto, login: string): Promise<Category> {
-
+  async create(createCategoryDto: CreateCategoryDto, login: string, role: UserRoleEnum): Promise<Category> {
+    if (role != UserRoleEnum.ADMIN) {
+      throw new ForbiddenException('Su usuario no cuenta con los suficientes permisos');
+    }
     const existsCategory = await this.categoriesRepository.exists({
       where: { 
         title: createCategoryDto.title
