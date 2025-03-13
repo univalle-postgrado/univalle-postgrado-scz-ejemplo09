@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, DefaultVal
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('v1')
+@ApiBearerAuth('access-token')
+@ApiTags('movies')
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
