@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -22,19 +26,21 @@ export class AuthService {
 
   async register(createUserDto: CreateUserDto) {
     const existsUser = await this.usersRepository.exists({
-      where: [
-        { login: createUserDto.login },
-        { email: createUserDto.email },
-      ]
+      where: [{ login: createUserDto.login }, { email: createUserDto.email }],
     });
     if (existsUser) {
-      throw new ConflictException('El login o email ya se encuentra registrado con otro usuario');
+      throw new ConflictException(
+        'El login o email ya se encuentra registrado con otro usuario',
+      );
     }
     // saltRounds = 10, es recomendable ya que mayor valor aumenta la complejidad del hash pero también el uso de procesador
-    const hashedPassword = await bcrypt.hash(this.configService.get<string>('ENCRYPTION_KEY') + createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(
+      this.configService.get<string>('ENCRYPTION_KEY') + createUserDto.password,
+      10,
+    );
     const newUser = this.usersRepository.create({
       ...createUserDto,
-      password: hashedPassword
+      password: hashedPassword,
     });
     return this.usersRepository.save(newUser);
   }
@@ -48,28 +54,37 @@ export class AuthService {
         password: true,
         fullname: true,
         email: true,
-        phone: true
+        phone: true,
       },
       where: {
-        login: loginDto.login
-      }
+        login: loginDto.login,
+      },
     });
     if (user) {
-      const isPasswordMatch = await bcrypt.compare(this.configService.get<string>('ENCRYPTION_KEY') + loginDto.password, user.password);
+      const isPasswordMatch = await bcrypt.compare(
+        this.configService.get<string>('ENCRYPTION_KEY') + loginDto.password,
+        user.password,
+      );
       if (isPasswordMatch) {
         const payload = {
           ...user,
-          password: undefined
+          password: undefined,
         };
 
         return {
-          'access_token': this.jwtService.sign({ ...payload, token_type: 'ACCESS' }, {
-            expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
-          }),
-          'refresh_token': this.jwtService.sign({ ...payload, token_type: 'REFRESH' }, {
-            expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')}m`,
-          })
-        }
+          access_token: this.jwtService.sign(
+            { ...payload, token_type: 'ACCESS' },
+            {
+              expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
+            },
+          ),
+          refresh_token: this.jwtService.sign(
+            { ...payload, token_type: 'REFRESH' },
+            {
+              expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')}m`,
+            },
+          ),
+        };
       }
     }
 
@@ -87,22 +102,22 @@ export class AuthService {
         role: true,
         fullname: true,
         email: true,
-        phone: true
+        phone: true,
       },
       where: {
-        login: refreshTokenDto.login
-      }
+        login: refreshTokenDto.login,
+      },
     });
     if (user) {
       const payload = {
-        ...user
+        ...user,
       };
 
       return {
-        'access_token': this.jwtService.sign(payload, {
+        access_token: this.jwtService.sign(payload, {
           expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')}m`,
-        })
-      }
+        }),
+      };
     }
 
     throw new UnauthorizedException(`El login no es válido`);
@@ -127,5 +142,4 @@ export class AuthService {
       }
     }
   }
-
 }

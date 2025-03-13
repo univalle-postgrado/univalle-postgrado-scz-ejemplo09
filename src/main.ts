@@ -7,13 +7,17 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({
-    stopAtFirstError: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      stopAtFirstError: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('MOVIES API')
-    .setDescription('Documentación de la API Restful para la gestión de películas y sus categorías')
+    .setDescription(
+      'Documentación de la API Restful para la gestión de películas y sus categorías',
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {

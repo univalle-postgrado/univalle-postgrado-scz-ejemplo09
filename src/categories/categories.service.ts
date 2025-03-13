@@ -1,4 +1,9 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,20 +21,23 @@ export class CategoriesService {
     private moviesRepository: Repository<Movie>,
   ) {}
 
-  private async findOneOrFail(id: number, relations = false): Promise<Category> {
+  private async findOneOrFail(
+    id: number,
+    relations = false,
+  ): Promise<Category> {
     const category = await this.categoriesRepository.findOne({
       where: { id: id },
       relations: {
-        movies: (relations === true ? true : false)
+        movies: relations === true ? true : false,
       },
       select: {
         movies: {
           id: true,
           title: true,
           releaseDate: true,
-          posterUrl: true
-        }
-      }
+          posterUrl: true,
+        },
+      },
     });
     if (!category) {
       throw new NotFoundException(`La categoría con el Id ${id} no existe`);
@@ -37,22 +45,35 @@ export class CategoriesService {
     return category;
   }
 
-  async create(createCategoryDto: CreateCategoryDto, login: string, role: UserRoleEnum): Promise<Category> {
+  async create(
+    createCategoryDto: CreateCategoryDto,
+    login: string,
+    role: UserRoleEnum,
+  ): Promise<Category> {
     if (role != UserRoleEnum.ADMIN) {
-      throw new ForbiddenException('Su usuario no cuenta con los suficientes permisos');
+      throw new ForbiddenException(
+        'Su usuario no cuenta con los suficientes permisos',
+      );
     }
     const existsCategory = await this.categoriesRepository.exists({
-      where: { 
-        title: createCategoryDto.title
-      }
+      where: {
+        title: createCategoryDto.title,
+      },
     });
     if (existsCategory) {
       throw new ConflictException('El título ya está registrado');
     }
-    return this.categoriesRepository.save({ ...createCategoryDto, createdBy: login });
+    return this.categoriesRepository.save({
+      ...createCategoryDto,
+      createdBy: login,
+    });
   }
 
-  async findAll(page = 1, limit = 10, relations = false): Promise<{ data: Category[]; total: number; page: number; limit: number }>  {
+  async findAll(
+    page = 1,
+    limit = 10,
+    relations = false,
+  ): Promise<{ data: Category[]; total: number; page: number; limit: number }> {
     const [data, total] = await this.categoriesRepository.findAndCount({
       skip: page > 0 ? (page - 1) * limit : 0,
       take: limit,
@@ -64,14 +85,14 @@ export class CategoriesService {
           id: true,
           title: true,
           releaseDate: true,
-          posterUrl: true
-        }
+          posterUrl: true,
+        },
       },
       relations: {
-        movies: relations ? true : false
-      }
+        movies: relations ? true : false,
+      },
     });
-  
+
     return {
       data,
       total,
@@ -84,8 +105,10 @@ export class CategoriesService {
     return this.findOneOrFail(id, relations);
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
     const category = await this.findOneOrFail(id);
 
     if (updateCategoryDto.title != null) {
@@ -107,9 +130,13 @@ export class CategoriesService {
       await this.moviesRepository.delete({ category });
       return this.categoriesRepository.delete(id);
     } else {
-      const countMovies = await this.moviesRepository.countBy({ categoryId: id });
+      const countMovies = await this.moviesRepository.countBy({
+        categoryId: id,
+      });
       if (countMovies > 0) {
-        throw new ConflictException({ message: `La categoría no se puede eliminar porque tiene ${countMovies} películas asociadas` })
+        throw new ConflictException({
+          message: `La categoría no se puede eliminar porque tiene ${countMovies} películas asociadas`,
+        });
       } else {
         return this.categoriesRepository.delete(id);
       }

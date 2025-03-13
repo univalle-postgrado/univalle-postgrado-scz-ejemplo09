@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,14 +23,14 @@ export class MoviesService {
     const movie = await this.moviesRepository.findOne({
       where: { id },
       relations: {
-        category: relations ? true : false
+        category: relations ? true : false,
       },
       select: {
         category: {
           id: true,
-          title: true
-        }
-      }
+          title: true,
+        },
+      },
     });
     if (!movie) {
       throw new NotFoundException(`La película con el Id ${id} no existe`);
@@ -36,9 +40,9 @@ export class MoviesService {
 
   async create(createMovieDto: CreateMovieDto): Promise<Movie> {
     const existsCategory = await this.categoriesRepository.exists({
-      where: { 
-        id: createMovieDto.categoryId
-      }
+      where: {
+        id: createMovieDto.categoryId,
+      },
     });
     if (!existsCategory) {
       throw new ConflictException('La categoría no existe');
@@ -46,7 +50,11 @@ export class MoviesService {
     return this.moviesRepository.save(createMovieDto);
   }
 
-  async findAll(page = 1, limit = 10, relations = false): Promise<{ data: Movie[]; total: number; page: number; limit: number }>  {
+  async findAll(
+    page = 1,
+    limit = 10,
+    relations = false,
+  ): Promise<{ data: Movie[]; total: number; page: number; limit: number }> {
     const [data, total] = await this.moviesRepository.findAndCount({
       skip: page > 0 ? (page - 1) * limit : 0,
       take: limit,
@@ -59,13 +67,13 @@ export class MoviesService {
         category: {
           id: true,
           title: true,
-        }
+        },
       },
       relations: {
-        category: relations ? true : false
-      }
+        category: relations ? true : false,
+      },
     });
-  
+
     return {
       data,
       total,
@@ -101,9 +109,9 @@ export class MoviesService {
     }
     if (updateMovieDto.categoryId != null) {
       const existsCategory = await this.categoriesRepository.exists({
-        where: { 
-          id: updateMovieDto.categoryId
-        }
+        where: {
+          id: updateMovieDto.categoryId,
+        },
       });
       if (!existsCategory) {
         throw new ConflictException('La categoría no existe');

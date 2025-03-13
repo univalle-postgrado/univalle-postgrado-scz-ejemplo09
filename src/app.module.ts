@@ -11,7 +11,7 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -26,7 +26,7 @@ import { UsersModule } from './users/users.module';
         entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
         synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
         extra: {
-          timezone: 'America/La_Paz'
+          timezone: 'America/La_Paz',
         },
         logging: true,
       }),

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, DefaultValuePipe, Query, ParseBoolPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  DefaultValuePipe,
+  Query,
+  ParseBoolPipe,
+} from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -19,7 +31,8 @@ export class MoviesController {
   findAll(
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('relations', new DefaultValuePipe(false), ParseBoolPipe) relations: boolean,
+    @Query('relations', new DefaultValuePipe(false), ParseBoolPipe)
+    relations: boolean,
   ) {
     return this.moviesService.findAll(page, limit, relations);
   }
@@ -27,7 +40,8 @@ export class MoviesController {
   @Get(':id')
   findOne(
     @Param('id') id: number,
-    @Query('relations', new DefaultValuePipe(false), ParseBoolPipe) relations: boolean,
+    @Query('relations', new DefaultValuePipe(false), ParseBoolPipe)
+    relations: boolean,
   ) {
     return this.moviesService.findOne(id, relations);
   }
