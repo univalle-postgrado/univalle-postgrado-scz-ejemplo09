@@ -96,7 +96,6 @@ export class AuthService {
       select: {
         id: true,
         login: true,
-        password: true,
         role: true,
         fullname: true,
         email: true,
@@ -109,6 +108,7 @@ export class AuthService {
     if (user) {
       const payload = {
         ...user,
+        token_type: 'ACCESS'
       };
 
       return {
