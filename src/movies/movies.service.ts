@@ -118,6 +118,7 @@ export class MoviesService {
       }
       movie.categoryId = updateMovieDto.categoryId;
     }
+    movie.updatedBy = updateMovieDto.updatedBy;
 
     return this.moviesRepository.save(movie);
   }

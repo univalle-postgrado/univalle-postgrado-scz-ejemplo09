@@ -9,6 +9,7 @@ import {
   HttpCode,
   DefaultValuePipe,
   Query,
+  Request,
   ParseBoolPipe,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
@@ -35,8 +36,8 @@ export class MoviesController {
     description: 'Película creada',
   })
   @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  create(@Body() createMovieDto: CreateMovieDto, @Request() request) {
+    return this.moviesService.create({ ...createMovieDto, createdBy: request.user.login });
   }
 
   @ApiOperation({ summary: 'Obtener la lista de todas las Películas' })
@@ -94,8 +95,8 @@ export class MoviesController {
     description: 'Película no actualizada porque no existe',
   })
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto) {
-    return this.moviesService.update(id, updateMovieDto);
+  update(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto, @Request() request) {
+    return this.moviesService.update(id, { ...updateMovieDto, updatedBy: request.user.login });
   }
 
   @ApiOperation({ summary: 'Eliminar una Película en base a su ID' })

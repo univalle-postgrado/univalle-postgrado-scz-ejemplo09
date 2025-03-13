@@ -129,6 +129,7 @@ export class CategoriesService {
     if (updateCategoryDto.enabled != null) {
       category.enabled = updateCategoryDto.enabled;
     }
+    category.updatedBy = login;
 
     return this.categoriesRepository.save(category);
   }

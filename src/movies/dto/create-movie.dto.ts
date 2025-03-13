@@ -3,6 +3,7 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUrl,
@@ -61,6 +62,10 @@ export class CreateMovieDto {
   @Min(0.0)
   @Max(10.0)
   rating: number;
+
+  @IsOptional()
+  @IsString({ message: 'Created by debe ser una cadena de texto' })
+  createdBy: string;
 
   @ApiProperty({
     description: 'ID de Categoría',

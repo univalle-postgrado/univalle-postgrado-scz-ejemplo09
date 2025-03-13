@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDateString,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUrl,
@@ -59,6 +60,10 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
   @Min(0.0)
   @Max(10.0)
   rating: number;
+
+  @IsOptional()
+  @IsString({ message: 'Updated by debe ser una cadena de texto' })
+  updatedBy: string;
 
   @ApiProperty({
     description: 'ID de Categoría',
