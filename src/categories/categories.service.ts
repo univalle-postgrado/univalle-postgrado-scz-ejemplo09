@@ -55,6 +55,7 @@ export class CategoriesService {
         'Su usuario no cuenta con los suficientes permisos',
       );
     }
+
     const existsCategory = await this.categoriesRepository.exists({
       where: {
         title: createCategoryDto.title,
@@ -108,7 +109,15 @@ export class CategoriesService {
   async update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
+    login: string,
+    role: UserRoleEnum
   ): Promise<Category> {
+    if (role != UserRoleEnum.ADMIN) {
+      throw new ForbiddenException(
+        'Su usuario no cuenta con los suficientes permisos',
+      );
+    }
+
     const category = await this.findOneOrFail(id);
 
     if (updateCategoryDto.title != null) {
@@ -124,7 +133,13 @@ export class CategoriesService {
     return this.categoriesRepository.save(category);
   }
 
-  async remove(id: number, cascade: boolean) {
+  async remove(id: number, cascade: boolean, role: UserRoleEnum) {
+    if (role != UserRoleEnum.ADMIN) {
+      throw new ForbiddenException(
+        'Su usuario no cuenta con los suficientes permisos',
+      );
+    }
+
     const category = await this.findOneOrFail(id);
     if (cascade) {
       await this.moviesRepository.delete({ category });

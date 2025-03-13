@@ -103,8 +103,9 @@ export class CategoriesController {
   update(
     @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @Request() request
   ) {
-    return this.categoriesService.update(id, updateCategoryDto);
+    return this.categoriesService.update(id, updateCategoryDto, request.user.login, request.user.role);
   }
 
   @ApiOperation({ summary: 'Eliminar una Categoría en base a su ID' })
@@ -120,8 +121,9 @@ export class CategoriesController {
     @Param('id') id: number,
     @Query('cascade', new DefaultValuePipe(false), ParseBoolPipe)
     cascade: boolean,
+    @Request() request
   ) {
-    await this.categoriesService.remove(id, cascade);
+    await this.categoriesService.remove(id, cascade, request.user.role);
   }
 
   @ApiOperation({
