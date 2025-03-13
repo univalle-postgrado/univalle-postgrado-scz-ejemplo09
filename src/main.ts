@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('MOVIES API')
-    .setDescription('API Reference')
+    .setDescription('Documentación de la API Restful para la gestión de películas y sus categorías')
     .setVersion('1.0')
     .addBearerAuth(
       {
