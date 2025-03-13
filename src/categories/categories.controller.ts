@@ -32,6 +32,10 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @ApiOperation({ summary: 'Crear una Categoría' })
+  @ApiResponse({
+    status: 201,
+    description: 'Categoría creada',
+  })
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto, @Request() request) {
     return this.categoriesService.create(
@@ -52,6 +56,10 @@ export class CategoriesController {
     name: 'relations',
     description: 'Obtener Películas relacionadas',
     example: false,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de Categorías',
   })
   @Get()
   findAll(
@@ -85,7 +93,7 @@ export class CategoriesController {
   @ApiOperation({
     summary: 'Actualizar los datos de una Categoría en base a su ID',
   })
-  @ApiParam({ name: 'id', description: 'ID de categoría' })
+  @ApiParam({ name: 'id', description: 'ID de Categoría' })
   @ApiResponse({ status: 200, description: 'Categoría actualizada' })
   @ApiResponse({
     status: 404,
@@ -100,7 +108,7 @@ export class CategoriesController {
   }
 
   @ApiOperation({ summary: 'Eliminar una Categoría en base a su ID' })
-  @ApiParam({ name: 'id', description: 'ID de categoría' })
+  @ApiParam({ name: 'id', description: 'ID de Categoría' })
   @ApiResponse({ status: 204, description: 'Categoría eliminada' })
   @ApiResponse({
     status: 404,
@@ -119,7 +127,7 @@ export class CategoriesController {
   @ApiOperation({
     summary: 'Obtener las Películas de una Categoría en base a su ID',
   })
-  @ApiParam({ name: 'id', description: 'ID de categoría' })
+  @ApiParam({ name: 'id', description: 'ID de Categoría' })
   @ApiResponse({
     status: 200,
     description: 'Listado de Películas asociadas al ID de Categoría',

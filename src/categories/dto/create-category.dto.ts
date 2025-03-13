@@ -18,6 +18,10 @@ export class CreateCategoryDto {
   @IsString({ message: 'Descripción debe ser una cadena de texto' })
   description: string;
 
+  @ApiPropertyOptional({
+    description: 'Estado de categoría',
+    example: 'true',
+  })
   @IsBoolean({ message: 'Habilitado debe ser tipo boleano' })
   enabled: boolean;
 }
