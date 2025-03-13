@@ -12,17 +12,18 @@ import {
 
 export class CreateMovieDto {
   @ApiProperty({
-      description: 'Título de Película',
-      example: 'La vida es bella',
-    })
+    description: 'Título de Película',
+    example: 'La vida es bella',
+  })
   @IsNotEmpty({ message: 'Título no puede estar vacío' })
   @IsString({ message: 'Título debe ser una cadena de texto' })
   title: string;
 
   @ApiProperty({
-      description: 'Sinopsis',
-      example: 'En 1939, a punto de estallar la Segunda Guerra Mundial (1939-1945), el extravagante Guido llega a Arezzo, en la Toscana,...',
-    })
+    description: 'Sinopsis',
+    example:
+      'En 1939, a punto de estallar la Segunda Guerra Mundial (1939-1945), el extravagante Guido llega a Arezzo, en la Toscana,...',
+  })
   @IsNotEmpty({ message: 'Sinopsis no puede estar vacía' })
   @IsString({ message: 'Sinopsis debe ser una cadena de texto' })
   synopsis: string;

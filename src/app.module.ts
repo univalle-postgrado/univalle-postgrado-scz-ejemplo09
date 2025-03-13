@@ -6,7 +6,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CategoriesModule } from './categories/categories.module';
 import { MoviesModule } from './movies/movies.module';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -34,7 +33,6 @@ import { UsersModule } from './users/users.module';
     CategoriesModule,
     MoviesModule,
     AuthModule,
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
